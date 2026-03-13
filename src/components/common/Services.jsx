@@ -109,7 +109,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section className="relative lg:py-20 bg-[#030303]">
+    <section className="relative py-12 lg:py-20 bg-[#030303]">
       <div className="flex flex-col items-center mb-16 md:mb-32 text-center px-6">
         <motion.span
           initial={{ opacity: 0, y: 10 }}

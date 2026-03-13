@@ -15,7 +15,7 @@ const Hero = () => {
     ], []);
 
     return (
-        <section className="relative min-h-screen flex flex-col items-center justify-between overflow-hidden bg-[#030303]/5 text-white font-sans">
+        <section className="relative min-h-screen flex flex-col items-center justify-between overflow-hidden bg-[#030303]/5 text-white font-sans py-15">
             {/* Plasma background */}
             <div className="absolute inset-0 z-0 h-full w-full overflow-hidden ">
                 <Plasma

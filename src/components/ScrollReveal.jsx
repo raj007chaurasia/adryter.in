@@ -36,8 +36,11 @@ const ScrollReveal = ({
 
     const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
     const wordElements = el.querySelectorAll('.word');
-
     const ctx = gsap.context(() => {
+      // Refresh ScrollTrigger and add resize listener
+      ScrollTrigger.refresh();
+      window.addEventListener('resize', () => ScrollTrigger.refresh());
+
       // Rotation animation
       gsap.fromTo(el, 
         { transformOrigin: '0% 50%', rotate: baseRotation }, 
@@ -66,7 +69,7 @@ const ScrollReveal = ({
           scrollTrigger: {
             trigger: el,
             scroller,
-            start: 'top 80%',
+            start: 'top 85%',
             end: wordAnimationEnd,
             scrub: true
           }
@@ -85,7 +88,7 @@ const ScrollReveal = ({
             scrollTrigger: {
               trigger: el,
               scroller,
-              start: 'top 80%',
+              start: 'top 85%',
               end: wordAnimationEnd,
               scrub: true
             }
@@ -94,8 +97,11 @@ const ScrollReveal = ({
       }
     }, el);
 
-    return () => ctx.revert();
-  }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
+    return () => {
+      ctx.revert();
+      window.removeEventListener('resize', () => ScrollTrigger.refresh());
+    };
+  }, [children, scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
 
   return (
     <h2 ref={containerRef} className={`my-5 ${containerClassName}`}>
