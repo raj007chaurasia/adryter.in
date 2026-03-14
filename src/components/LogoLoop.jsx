@@ -106,18 +106,22 @@ const useAnimationLoop = (trackRef, targetVelocity, seqWidth, seqHeight, isHover
         lastTimestampRef.current = timestamp;
       }
 
-      const deltaTime = Math.max(0, timestamp - lastTimestampRef.current) / 1000;
+      const deltaTime = Math.min(0.05, Math.max(0, timestamp - lastTimestampRef.current) / 1000);
       lastTimestampRef.current = timestamp;
 
       const target = isHovered && hoverSpeed !== undefined ? hoverSpeed : targetVelocity;
 
-      const easingFactor = 1 - Math.exp(-deltaTime / ANIMATION_CONFIG.SMOOTH_TAU);
-      velocityRef.current += (target - velocityRef.current) * easingFactor;
+      // Only perform smoothing if the difference is significant
+      const velDiff = target - velocityRef.current;
+      if (Math.abs(velDiff) > 0.01) {
+        const easingFactor = 1 - Math.exp(-deltaTime / ANIMATION_CONFIG.SMOOTH_TAU);
+        velocityRef.current += velDiff * easingFactor;
+      } else {
+        velocityRef.current = target;
+      }
 
-      if (seqSize > 0) {
-        let nextOffset = offsetRef.current + velocityRef.current * deltaTime;
-        nextOffset = ((nextOffset % seqSize) + seqSize) % seqSize;
-        offsetRef.current = nextOffset;
+      if (seqSize > 0 && Math.abs(velocityRef.current) > 0.01) {
+        offsetRef.current = ((offsetRef.current + velocityRef.current * deltaTime) % seqSize + seqSize) % seqSize;
 
         const transformValue = isVertical
           ? `translate3d(0, ${-offsetRef.current}px, 0)`
@@ -260,8 +264,8 @@ export const LogoLoop = memo(({
       return (
         <li
           className={cx(
-            'flex-none text-[length:var(--logoloop-logoHeight)] leading-[1]',
-            isVertical ? 'mb-[var(--logoloop-gap)]' : 'mr-[var(--logoloop-gap)]',
+            'flex-none text-(length:--logoloop-logoHeight) leading-none',
+            isVertical ? 'mb-(--logoloop-gap)' : 'mr-(--logoloop-gap)',
             scaleOnHover && 'overflow-visible group/item'
           )}
           key={key}
@@ -279,7 +283,7 @@ export const LogoLoop = memo(({
           'inline-flex items-center',
           'motion-reduce:transition-none',
           scaleOnHover &&
-          'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
+          'transition-transform duration-300 ease-in-out group-hover/item:scale-120'
         )}
         aria-hidden={!!item.href && !item.ariaLabel}>
         {item.node}
@@ -287,12 +291,12 @@ export const LogoLoop = memo(({
     ) : (
       <img
         className={cx(
-          'h-[var(--logoloop-logoHeight)] w-auto block object-contain',
+          'h-(--logoloop-logoHeight) w-auto block object-contain',
           '[-webkit-user-drag:none] pointer-events-none',
           '[image-rendering:-webkit-optimize-contrast]',
           'motion-reduce:transition-none',
           scaleOnHover &&
-          'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
+          'transition-transform duration-300 ease-in-out group-hover/item:scale-120'
         )}
         src={item.src}
         srcSet={item.srcSet}
@@ -329,8 +333,8 @@ export const LogoLoop = memo(({
     return (
       <li
         className={cx(
-          'flex-none text-[length:var(--logoloop-logoHeight)] leading-[1]',
-          isVertical ? 'mb-[var(--logoloop-gap)]' : 'mr-[var(--logoloop-gap)]',
+          'flex-none text-(length:--logoloop-logoHeight) leading-none',
+          isVertical ? 'mb-(--logoloop-gap)' : 'mr-(--logoloop-gap)',
           scaleOnHover && 'overflow-visible group/item'
         )}
         key={key}

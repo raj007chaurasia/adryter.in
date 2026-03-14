@@ -86,7 +86,7 @@ const Hero = () => {
             </div>
 
             {/* Dual-Lane Logo Loop Section */}
-            <div className="w-full relative z-10 py-12 bg-black/20 backdrop-blur-sm">
+            <div className="w-full relative z-10 py-12 bg-black/40">
                 <p className="text-center text-[10px] uppercase tracking-[0.4em] text-gray-500 mb-10 font-bold opacity-50">
                     Trusted by industry leaders worldwide
                 </p>

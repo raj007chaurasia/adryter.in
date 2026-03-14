@@ -67,3 +67,30 @@ body {
 .animate-star-movement-top {
   animation: star-movement-top linear infinite alternate;
 }
+
+/* --- Custom Theme Scrollbar --- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #030303;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(157, 2, 157, 0.2);
+  border-radius: 10px;
+  border: 2px solid #030303;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(157, 2, 157, 0.8);
+  box-shadow: 0 0 15px rgba(157, 2, 157, 0.5);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(121, 2, 2, 0.4) #030303;
+}

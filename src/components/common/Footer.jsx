@@ -74,7 +74,7 @@ export default function Footer() {
             Terms & Conditions
           </a>
           
-          <p className="text-xs font-bold text-gray-600 uppercase tracking-widest">
+          <p className="text-xs text-center font-bold text-gray-600 uppercase tracking-widest">
             © 2026, AdRyter, All Rights Reserved.
           </p>
 
@@ -93,7 +93,7 @@ export default function Footer() {
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute bottom-1/2 translate-y-[15%] z-20"
           >
-            <h2 className="text-[14vw] md:text-[16vw] font-black text-white/[0.5] tracking-[0.05em] md:tracking-[0.1em] leading-none select-none drop-shadow-[0_0_30px_rgba(255,255,255,0.1)] uppercase">
+            <h2 className="text-[14vw] md:text-[16vw] font-black text-white/50 tracking-[0.05em] md:tracking-widest leading-none select-none drop-shadow-[0_0_30px_rgba(255,255,255,0.1)] uppercase">
               AdRyter
             </h2>
           </motion.div>
@@ -106,9 +106,9 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-1/2 translate-y-[-4%] scale-y-[-1] blur-[4px] z-10"
+            className="absolute top-1/2 translate-y-[-4%] scale-y-[-1] blur-xs z-10"
           >
-            <h2 className="text-[14vw] md:text-[16vw] font-black text-white/[0.2] tracking-[0.05em] md:tracking-[0.1em] leading-none select-none bg-linear-to-b from-white/30 to-transparent bg-clip-text text-transparent uppercase">
+            <h2 className="text-[14vw] md:text-[16vw] font-black text-white/20 tracking-[0.05em] md:tracking-widest leading-none select-none bg-linear-to-b from-white/30 to-transparent bg-clip-text uppercase">
               AdRyter
             </h2>
           </motion.div>

@@ -161,7 +161,7 @@ export default function Services() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="relative flex items-center gap-4 bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 text-white px-12 py-5 rounded-full font-bold text-lg shadow-2xl transition-all"
+              className="relative flex items-center gap-4 cursor-pointer bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 text-white px-12 py-5 rounded-full font-bold text-lg shadow-2xl transition-all"
             >
               Book a Call
               <div className="flex items-center  justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 group-hover:bg-[#660066] transition-colors">

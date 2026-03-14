@@ -26,10 +26,10 @@ const Navbar = () => {
     };
 
     const navLinks = [
-        { name: 'About Us', path: '/' },
+        { name: 'About Us', path: '/about' },
         { name: 'Services', path: '#' },
         { name: 'Products', path: '#' },
-        { name: 'Contact Us', path: '#' },
+        { name: 'Contact Us', path: '/contact' },
     ];
 
     return (
@@ -46,20 +46,20 @@ const Navbar = () => {
                         <Link to="/" onClick={() => { setIsOpen(false); document.body.style.overflow = 'auto'; }}>
                             <img src="/images/adryter2.png" alt="Logo" className="h-6 brightness-110" />
                         </Link>
-                        
-                        <button 
+
+                        <button
                             onClick={toggleMenu}
                             className="relative w-8 h-8 flex flex-col items-center justify-center gap-1.5 focus:outline-none"
                         >
-                            <motion.span 
+                            <motion.span
                                 animate={isOpen ? { rotate: 45, y: 5.5 } : { rotate: 0, y: 0 }}
                                 className="w-5 h-0.5 bg-white rounded-full block transition-transform"
                             />
-                            <motion.span 
+                            <motion.span
                                 animate={isOpen ? { opacity: 0, x: 20 } : { opacity: 1, x: 0 }}
                                 className="w-5 h-0.5 bg-white rounded-full block transition-all"
                             />
-                            <motion.span 
+                            <motion.span
                                 animate={isOpen ? { rotate: -45, y: -5.5 } : { rotate: 0, y: 0 }}
                                 className="w-5 h-0.5 bg-white rounded-full block transition-transform"
                             />
@@ -85,7 +85,7 @@ const Navbar = () => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: idx * 0.1 }}
                                 >
-                                    <Link 
+                                    <Link
                                         to={link.path}
                                         onClick={() => {
                                             setIsOpen(false);
@@ -98,7 +98,7 @@ const Navbar = () => {
                                 </motion.div>
                             ))}
                         </nav>
-                        
+
                         <div className="absolute bottom-12 left-8 right-8 flex flex-col gap-6">
                             <div className="h-px w-full bg-white/10" />
                             <div className="flex justify-between items-center opacity-30">
