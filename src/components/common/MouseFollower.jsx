@@ -62,9 +62,9 @@ const MouseFollower = () => {
       {/* Circle 1 (Closest to Cursor - White/Bright) */}
       <motion.div
         style={{ x: spring1X, y: spring1Y }}
-        className="absolute w-4 h-4 rounded-full bg-white/20 border border-white/30 backdrop-blur-sm flex items-center justify-center p-0.5 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+        className="absolute w-4 h-4 rounded-full bg-[#cc00cc] border border-[#cc00cc]/30 backdrop-blur-sm flex items-center justify-center p-0.5 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
       >
-        <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_10px_white]" />
+        <div className="w-1.5 h-1.5 rounded-full bg-[#cc00cc] shadow-[0_0_10px_#cc00cc]" />
       </motion.div>
     </div>
   );

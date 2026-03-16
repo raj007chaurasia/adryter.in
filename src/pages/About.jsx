@@ -8,6 +8,8 @@ import AboutStory from '../components/about/AboutStory';
 import AboutStats from '../components/about/AboutStats';
 import AboutContributions from '../components/about/AboutContributions';
 import AboutLogos from '../components/about/AboutLogos';
+import FAQ from '@/components/common/FAQ';
+import AboutCareer from '../components/about/AboutCareer';
 
 const About = () => {
     return (
@@ -19,6 +21,8 @@ const About = () => {
             <AboutStory />
             <AboutContributions />
             <AboutLogos />
+            <AboutCareer />
+            <FAQ />
             <Footer />
         </div>
     );

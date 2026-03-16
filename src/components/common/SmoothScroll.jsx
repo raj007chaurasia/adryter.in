@@ -1,7 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 
 const SmoothScroll = ({ children }) => {
+    const location = useLocation();
+    const lenisRef = useRef(null);
+
     useEffect(() => {
         const lenis = new Lenis({
             duration: 1.2,
@@ -15,8 +19,12 @@ const SmoothScroll = ({ children }) => {
             infinite: false,
         });
 
+        lenisRef.current = lenis;
+
         function raf(time) {
-            lenis.raf(time);
+            if (lenisRef.current) {
+                lenisRef.current.raf(time);
+            }
             requestAnimationFrame(raf);
         }
 
@@ -24,8 +32,18 @@ const SmoothScroll = ({ children }) => {
 
         return () => {
             lenis.destroy();
+            lenisRef.current = null;
         };
     }, []);
+
+    // Scroll to top on page change
+    useEffect(() => {
+        if (lenisRef.current) {
+            lenisRef.current.scrollTo(0, { immediate: true });
+        } else {
+            window.scrollTo(0, 0);
+        }
+    }, [location.pathname]);
 
     return <>{children}</>;
 };
