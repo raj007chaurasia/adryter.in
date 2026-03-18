@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { Send, Mail, Phone } from 'lucide-react';
+import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
+import { Send, Mail, Phone, Check } from 'lucide-react';
+import axios from 'axios';
 
 const ServiceFormCard = () => {
     const mouseX = useMotionValue(0);
@@ -16,17 +17,61 @@ const ServiceFormCard = () => {
         name: '',
         email: '',
         whatsapp: '',
+        subject: '',
         details: ''
     });
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
+
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.name.trim()) newErrors.name = 'Name is required';
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = 'Invalid email address';
+        }
+        if (!formData.details.trim()) newErrors.details = 'Project details are required';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) setErrors(prev => ({ ...prev, [name]: null }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle form submission logic
-        alert("Form submitted! (Demo)");
+        if (!validate()) return;
+        setIsSubmitting(true);
+        setErrors({});
+
+        try {
+            const payload = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.whatsapp,
+                subject: formData.subject,
+                message: formData.details
+            };
+            const response = await axios.post('/api/contact', payload);
+
+            if (response.data.success) {
+                setIsSuccess(true);
+                setFormData({ name: '', email: '', whatsapp: '', subject: '', details: '' });
+                setTimeout(() => setIsSuccess(false), 5000);
+            } else {
+                setErrors({ submit: response.data.message || 'Failed to send message' });
+            }
+        } catch (err) {
+            setErrors({ submit: err.response?.data?.message || 'Network error or server unavailable' });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -104,71 +149,119 @@ const ServiceFormCard = () => {
 
             {/* Right Column: The form inputs structure */}
             <div className="p-8 md:p-12 lg:p-14 flex flex-col flex-1 z-20 justify-center">
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full max-w-xl">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">Name</label>
-                            <input 
-                                type="text" 
-                                name="name" 
-                                value={formData.name} 
-                                onChange={handleChange} 
-                                placeholder="Your Name" 
-                                required
-                                className="px-4 py-3 rounded-xl bg-white/3 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300"
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">Email</label>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                value={formData.email} 
-                                onChange={handleChange} 
-                                placeholder="name@example.com" 
-                                required
-                                className="px-4 py-3 rounded-xl bg-white/3 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300"
-                            />
-                        </div>
-                    </div>
+                <AnimatePresence mode="wait">
+                    {isSuccess ? (
+                        <motion.div
+                            key="success"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="flex flex-col items-center justify-center py-16 text-center"
+                        >
+                            <div className="w-16 h-16 rounded-full bg-[#660066]/20 flex items-center justify-center mb-6 border border-[#cc00cc]/30">
+                                <Check className="w-8 h-8 text-[#cc00cc]" />
+                            </div>
+                            <h3 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+                                <span className="italic">Proposal Sent!</span>
+                            </h3>
+                            <p className="text-gray-500 text-sm">We'll get back to you within 24 hours.</p>
+                        </motion.div>
+                    ) : (
+                        <motion.form
+                            key="form"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onSubmit={handleSubmit}
+                            className="flex flex-col gap-5 w-full max-w-xl"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">Name</label>
+                                    <input 
+                                        type="text" 
+                                        name="name" 
+                                        value={formData.name} 
+                                        onChange={handleChange} 
+                                        placeholder="Your Name" 
+                                        className={`px-4 py-3 rounded-xl bg-white/3 border ${errors.name ? 'border-rose-500/50' : 'border-white/10'} text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300`}
+                                    />
+                                    {errors.name && <p className="text-[10px] text-rose-500 font-medium">{errors.name}</p>}
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">Email</label>
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        value={formData.email} 
+                                        onChange={handleChange} 
+                                        placeholder="name@example.com" 
+                                        className={`px-4 py-3 rounded-xl bg-white/3 border ${errors.email ? 'border-rose-500/50' : 'border-white/10'} text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300`}
+                                    />
+                                    {errors.email && <p className="text-[10px] text-rose-500 font-medium">{errors.email}</p>}
+                                </div>
+                            </div>
 
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">WhatsApp No.</label>
-                        <input 
-                            type="text" 
-                            name="whatsapp" 
-                            value={formData.whatsapp} 
-                            onChange={handleChange} 
-                            placeholder="Enter your number" 
-                            required
-                            className="px-4 py-3 rounded-xl bg-white/3 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300"
-                        />
-                    </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">WhatsApp No.</label>
+                                    <input 
+                                        type="text" 
+                                        name="whatsapp" 
+                                        value={formData.whatsapp} 
+                                        onChange={handleChange} 
+                                        placeholder="Enter your number" 
+                                        className="px-4 py-3 rounded-xl bg-white/3 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300"
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">Subject</label>
+                                    <input 
+                                        type="text" 
+                                        name="subject" 
+                                        value={formData.subject} 
+                                        onChange={handleChange} 
+                                        placeholder="e.g. New Website" 
+                                        className="px-4 py-3 rounded-xl bg-white/3 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300"
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">Project Details</label>
-                        <textarea 
-                            name="details" 
-                            value={formData.details} 
-                            onChange={handleChange} 
-                            placeholder="Tell us about your project..." 
-                            rows={4}
-                            required
-                            className="px-4 py-3 rounded-xl bg-white/3 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300 resize-none"
-                        />
-                    </div>
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-gray-300 text-xs font-semibold tracking-wider uppercase">Project Details</label>
+                                <textarea 
+                                    name="details" 
+                                    value={formData.details} 
+                                    onChange={handleChange} 
+                                    placeholder="Tell us about your project..." 
+                                    rows={4}
+                                    className={`px-4 py-3 rounded-xl bg-white/3 border ${errors.details ? 'border-rose-500/50' : 'border-white/10'} text-white placeholder-gray-500 text-sm focus:outline-none focus:border-[#cc00cc]/50 focus:bg-white/5 transition-all duration-300 resize-none`}
+                                />
+                                {errors.details && <p className="text-[10px] text-rose-500 font-medium">{errors.details}</p>}
+                            </div>
 
-                    <button 
-                        type="submit" 
-                        className="group relative flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-linear-to-r from-[#cc00cc] to-[#6035d8] hover:from-[#d11ad1] hover:to-[#6d3ae1] text-white font-bold text-sm uppercase tracking-widest transition-all duration-300 shadow-[0_10px_30px_-10px_rgba(204,0,204,0.4)] hover:shadow-[0_15px_40px_-5px_rgba(204,0,204,0.5)] hover:scale-[1.01] active:scale-[0.98] cursor-pointer mt-2"
-                    >
-                        Send Proposal
-                        <Send className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
-                    </button>
-                </form>
+                            <button 
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="group relative flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-linear-to-r from-[#cc00cc] to-[#6035d8] hover:from-[#d11ad1] hover:to-[#6d3ae1] text-white font-bold text-sm uppercase tracking-widest transition-all duration-300 shadow-[0_10px_30px_-10px_rgba(204,0,204,0.4)] hover:shadow-[0_15px_40px_-5px_rgba(204,0,204,0.5)] hover:scale-[1.01] active:scale-[0.98] cursor-pointer mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isSubmitting ? (
+                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                ) : (
+                                    <>
+                                        Send Proposal
+                                        <Send className="w-4 h-4 transition-transform group-hover:translate-x-1 duration-300" />
+                                    </>
+                                )}
+                            </button>
+                            {errors.submit && <p className="text-[12px] text-rose-500 font-medium text-center">{errors.submit}</p>}
+                        </motion.form>
+                    )}
+                </AnimatePresence>
             </div>
         </motion.div>
     );
 };
 
 export default ServiceFormCard;
+

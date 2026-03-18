@@ -1,11 +1,25 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
 import ContactForm from "../components/common/ContactForm";
 import Footer from "../components/common/Footer";
 
 const ContactPage = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === '#contact-form') {
+      setTimeout(() => {
+        const el = document.getElementById('contact-form');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 300);
+    }
+  }, [location]);
+
   return (
     <div className="bg-[#030303] min-h-screen pt-24 relative overflow-hidden">
       {/* Background Subtle Glows */}
@@ -94,7 +108,7 @@ const ContactPage = () => {
              </div>
 
              {/* Right: Focused Form */}
-             <div className="lg:col-span-8">
+             <div id="contact-form" className="lg:col-span-8">
                <motion.div 
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}

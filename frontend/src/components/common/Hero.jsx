@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Plasma from '../Plasma';
 import StarBorder from '../StarBorder';
 import LogoLoop from '../LogoLoop';
 
 const Hero = () => {
+    const navigate = useNavigate();
     const partnerLogos = useMemo(() => [
         { node: <span className="text-gray-500 font-bold tracking-widest px-4 opacity-50 hover:opacity-100 transition-opacity">TECHFLOW</span> },
         { node: <span className="text-gray-500 font-bold tracking-widest px-4 opacity-50 hover:opacity-100 transition-opacity">VANTAGE</span> },
@@ -74,6 +75,7 @@ const Hero = () => {
                         speed="6s"
                         thickness={2}
                         className="hover:scale-[1.03] cursor-pointer active:scale-[0.97] bg-[#5500663f] transition-all shadow-[0_0_40px_rgba(102,0,102,0.3)]"
+                        onClick={() => navigate('/contact#contact-form')}
                     >
                         <div className="px-10 py-4 text-white text-xs font-black uppercase tracking-[0.25em] flex items-center gap-2">
                             Start Your Project
